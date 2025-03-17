@@ -1,0 +1,39 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+        tls:
+          cert_file: /server.crt
+          key_file: /server.key
+          ca_file: /ca.crt
+          client_ca_file: /ca.crt
+
+exporters:
+  file:
+    path: "/out.json"
+
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: "otelcol"
+    const_labels:
+      cluster: "example-cluster"
+
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+
+  otlphttp:
+    endpoint: "http://logstash:5044"
+    encoding: "json"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [file]
+    metrics:
+      receivers: [otlp]
+      exporters: [file, otlphttp, prometheus]
+    logs:
+      receivers: [otlp]
+      exporters: [file, otlphttp, loki]
