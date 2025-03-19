@@ -33,7 +33,9 @@ service:
       exporters: [file]
     metrics:
       receivers: [otlp]
-      exporters: [file, otlphttp, prometheus]
+      # exporters: [file, otlphttp, prometheus]
+      exporters: [file]
     logs:
       receivers: [otlp]
-      exporters: [file, otlphttp, loki]
+      # exporters: [file, otlphttp, loki]
+      exporters: [file]
