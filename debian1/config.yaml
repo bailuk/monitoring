@@ -14,9 +14,17 @@ receivers:
     include:
       - /fake_log.log
 
+processors:
+  batch:
+    timeout: 20s
+    send_batch_size: 1000
+
 exporters:
   otlp:
     endpoint: "debian2:4317"
+    sending_queue:
+      enabled: true
+      queue_size: 50000
     tls:
       insecure: false
       ca_file: /ca.crt
@@ -27,7 +35,9 @@ service:
   pipelines:
     metrics:
       receivers: [hostmetrics]
+      processors: [batch]
       exporters: [otlp]
     logs:
       receivers: [filelog]
+      processors: [batch]
       exporters: [otlp]
